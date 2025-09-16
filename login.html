@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            font-family: Arial, sans-serif;
+        }
+
+        .login-box {
+            background: rgba(255, 255, 255, 0.126);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.981);
+            width: 300px;
+            color: rgb(238, 238, 238);
+            text-align: center;
+            position: absolute;
+            z-index: 2;
+            animation: fadeIn 2s ease;
+        }
+
+        .login-box h2 {
+            margin-bottom: 20px;
+        }
+
+        .login-box input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 6px;
+        }
+
+        .login-box button {
+            width: 100%;
+            padding: 12px;
+            background: #0f5c90;
+            border: none;
+            border-radius: 6px;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+
+        }
+
+        .login-box button:hover {
+            background: #68b0c9;
+        }
+
+        .nav {
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            z-index: 2;
+
+        }
+
+        .bg img {
+            position: relative;
+            z-index: 1;
+            object-fit: cover;
+            filter: blur(3px);
+            height:99.5vh;
+            width:99.5vw;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+                /* slight upward motion */
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        a{
+            color: rgb(255, 255, 255);
+            
+        }
+        a:hover{
+            color: #fd0707;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="nav">
+        <img src="logo.png" width="100">
+
+    </div>
+    <div class="bg"><img src="loginbg.jpg" width="1530"></div>
+        <!-- ...existing code... -->
+<div class="login-box">
+    <h2>Login</h2>
+    <form action="home.html" method="get">
+        <select id="userType"
+        style=width:100%;padding:px;margin:20px0;border:none;border-radius:6px;>
+            <option value="student">Student</option>
+            <option value="teacher">Teacher</option>
+        </select>
+        <input type="text" id="regNo" placeholder="Register.NO" required>
+        <input type="text" id="staffCode" placeholder="Staff Code" style="display:none;">
+        <input type="password" placeholder="Password" required>
+        <button type="submit">Login</button>
+        <a href="#">forgot password?</a>
+    </form>
+</div>
+<script>
+    const userType = document.getElementById('userType');
+    const regNo = document.getElementById('regNo');
+    const staffCode = document.getElementById('staffCode');
+
+    userType.addEventListener('change', function () {
+        if (userType.value === 'teacher') {
+            regNo.style.display = 'none';
+            regNo.required = false;
+            staffCode.style.display = 'block';
+            staffCode.required = true;
+        } else {
+            regNo.style.display = 'block';
+            regNo.required = true;
+            staffCode.style.display = 'none';
+            staffCode.required = false;
+        }
+    });
+</script>
+<!-- ...existing code... -->
+    </div>
+</body>
+
+</html>

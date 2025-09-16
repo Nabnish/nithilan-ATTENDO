@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attendo</title>
+    <style>
+        /* Reset */
+        @import url('https://fonts.googleapis.com/css2?family=Google+Sans+Code:ital,wght@0,300..800;1,300..800&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            color: #fff;
+            background: #000;
+        }
+
+        /* Navbar */
+        nav {
+            position: fixed;
+            width: 100%;
+            background: rgba(0, 40, 85, 0.8);
+            padding: 10px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            backdrop-filter: blur(8px);
+            padding-bottom: 0px;
+            padding-top: 0px;
+            animation: fadeIn 3s ease;
+            animation: slideInup 2.5s ease;
+        }
+
+        @keyframes fadeIN {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+                /* slight upward motion */
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideInup {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+                /* slight upward motion */
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        nav h1 {
+            color: white;
+            font-size: 24px;
+
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 25px;
+        }
+
+        nav ul li {
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        nav ul li:hover {
+            color: #ffcc00;
+            transform: scale(1.1);
+        }
+
+        /* Hero with Video */
+        .hero {
+            position: relative;
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .hero video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 110%;
+            object-fit: cover;
+            filter: blur(0px) brightness(70%);
+            z-index: -1;
+        }
+
+        .hero .content {
+            position: relative;
+            z-index: 1;
+            max-width: 800px;
+            padding: 20px;
+            animation: fadeIn 2s ease;
+            font-family: Libre Baskerville Static;
+        }
+
+        .hero h2 {
+            font-size: 48px;
+            margin-bottom: 20px;
+            animation: slideInUp 1.5s ease;
+        }
+
+
+        .hero p {
+            font-size: 20px;
+            animation: fadeIn 2s ease;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .btn {
+            background-color: rgba(0, 40, 85, 0.8);
+            color: white;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .btn:hover {
+            color: #ffcc00;
+            transform: scale(1.1);
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav>
+        <img src="logo.png" width="80">
+        <ul>
+            <form action="home.html" method="get">       
+                <div class="btn" onclick="location.href='home.html'">Home</div>
+            </form>    
+            <li>Notice</li>
+            <form action="attendance.html" method="get">
+                <div class="btn" onclick="location.href='attendance.html'">Attendance</div>
+            </form>
+            <form action="calender.html" method="get">       
+                <div class="btn" onclick="location.href='calender.html'">Calender</div>
+            </form>
+            <li>About Us</li>
+            <li>Help</li>
+            <form action="login.html" method="get">
+                <div class="btn" onclick="location.href='login.html'">Logout</div>
+            </form>
+        </ul>
+    </nav>
+
+    <div class="hero">
+        <video autoplay muted loop>
+            <source src="homefinal.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+        <div class="content">
+            <h2>Welcome to Attendo</h2>
+            <p>Manage notices, track attendance, and stay updated with ease.</p>
+        </div>
+    </div>
+
+</body>
+
+</html>

@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Simple Calendar</title>
+<style>
+  :root{ --bg:#6404ff; --card:#ffffff; --accent:#4f46e5; --muted:#6b7280; --cell:#eef2ff }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;background:var(--bg);display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px}
+  .wrap{width:100%;max-width:760px}
+  .card{background:var(--card);border-radius:10px;padding:16px;box-shadow:0 6px 18px rgba(15,23,42,0.08)}
+  .top{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px}
+  .month{font-weight:600;font-size:18px}
+  .controls button{margin-left:6px;padding:6px 10px;border-radius:8px;border:0;background:var(--cell);cursor:pointer}
+  .grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+  .weekday{font-size:13px;color:var(--muted);text-align:center;padding:8px 6px}
+  .day{min-height:80px;background:transparent;padding:8px;border-radius:8px;border:1px dashed rgba(0,0,0,0.03);cursor:pointer;position:relative;overflow:hidden}
+  .other{opacity:.35}
+  .num{font-weight:700;margin-bottom:6px}
+  .event{font-size:12px;background:var(--cell);padding:4px 6px;border-radius:6px;display:inline-block;margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .footer{margin-top:10px;font-size:13px;color:var(--muted);text-align:center}
+  @media (max-width:560px){
+    .day{min-height:64px}
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <div class="top">
+        <div>
+          <div class="month" id="monthLabel">Month Year</div>
+          <div style="font-size:13px;color:var(--muted)">Click a day to add an event</div>
+        </div>
+        <div class="controls">
+          <button id="prev">&larr;</button>
+          <button id="today">Today</button>
+          <button id="next">&rarr;</button>
+        </div>
+      </div>
+
+      <div class="grid" id="weekdays"></div>
+      <div class="grid" id="days"></div>
+
+      <div class="footer">Simple calendar • events saved locally</div>
+    </div>
+  </div>
+
+<script>
+(function(){
+  const weekdays = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  const weekdaysEl = document.getElementById('weekdays');
+  const daysEl = document.getElementById('days');
+  const monthLabel = document.getElementById('monthLabel');
+
+  // state
+  let view = new Date(); // current view month
+  // load events from localStorage: { "YYYY-MM-DD": ["Event 1","Event 2"] }
+  const STORAGE_KEY = 'simple_calendar_events_v1';
+  let events = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+
+  function save() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(events));
+  }
+
+  function fmtYMD(d){
+    const y = d.getFullYear();
+    const m = (d.getMonth()+1).toString().padStart(2,'0');
+    const dd = d.getDate().toString().padStart(2,'0');
+    return `${y}-${m}-${dd}`;
+  }
+
+  function renderWeekdays(){
+    weekdaysEl.innerHTML = weekdays.map(w => `<div class="weekday">${w}</div>`).join('');
+  }
+
+  function render(){
+    daysEl.innerHTML = '';
+    const year = view.getFullYear();
+    const month = view.getMonth();
+
+    const first = new Date(year, month, 1);
+    const startDay = first.getDay();
+    const daysInMonth = new Date(year, month+1, 0).getDate();
+    const prevMonthDays = new Date(year, month, 0).getDate();
+
+    monthLabel.textContent = first.toLocaleString(undefined, { month: 'long', year: 'numeric' });
+
+    const cells = [];
+
+    // previous month's tail
+    for(let i = startDay - 1; i >= 0; i--){
+      const d = prevMonthDays - i;
+      cells.push({ day: d, other: true, y: (month===0?year-1:year), m: (month===0?11:month-1) });
+    }
+    // current month
+    for(let i=1;i<=daysInMonth;i++) cells.push({ day: i, other:false, y: year, m: month });
+    // next month's head
+    while(cells.length % 7 !== 0){
+      const idx = cells.length - (startDay + daysInMonth);
+      cells.push({ day: idx+1, other:true, y: (month===11?year+1:year), m: (month===11?0:month+1) });
+    }
+
+    cells.forEach(c => {
+      const d = new Date(c.y, c.m, c.day);
+      const iso = fmtYMD(d);
+      const evs = events[iso] || [];
+      const isToday = (new Date()).toDateString() === d.toDateString();
+
+      const el = document.createElement('div');
+      el.className = 'day' + (c.other ? ' other' : '');
+      el.innerHTML = `<div class="num">${c.day} ${isToday?'<span style="font-weight:600;color:var(--accent);margin-left:6px;font-size:12px">Today</span>':''}</div>
+                      <div class="events">${evs.slice(0,2).map(e=>`<div class="event">${escapeHtml(e)}</div>`).join('')}</div>`;
+      el.addEventListener('click', ()=> onDayClick(d));
+      daysEl.appendChild(el);
+    });
+  }
+
+  function onDayClick(dateObj){
+    const iso = fmtYMD(dateObj);
+    const title = prompt(`Add event for ${iso} (leave empty to cancel):`);
+    if(!title) return;
+    if(!events[iso]) events[iso] = [];
+    events[iso].push(title.trim());
+    save();
+    render();
+  }
+
+  function escapeHtml(str){
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/"/g, '&quot;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
+  }
+
+  // controls
+  document.getElementById('prev').addEventListener('click', ()=>{
+    view.setMonth(view.getMonth()-1); render();
+  });
+  document.getElementById('next').addEventListener('click', ()=>{
+    view.setMonth(view.getMonth()+1); render();
+  });
+  document.getElementById('today').addEventListener('click', ()=>{
+    view = new Date(); render();
+  });
+
+  // init
+  renderWeekdays();
+  render();
+})();
+</script>
+</body>
+</html>
