@@ -19,7 +19,7 @@
 
         .login-box {
             background: rgba(255, 255, 255, 0.126);
-            padding: 30px;
+            padding: 40px;
             border-radius: 12px;
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.981);
             width: 300px;
@@ -28,18 +28,28 @@
             position: absolute;
             z-index: 2;
             animation: fadeIn 2s ease;
+            
         }
 
         .login-box h2 {
             margin-bottom: 20px;
+            padding-top: 0px;
+            margin-top: 0px;
+            position: relative;
+            top:0px;
+            left:10px
+            
         }
 
         .login-box input {
-            width: 100%;
+            width: 90%;
             padding: 10px;
-            margin: 10px 0;
+            margin-top:10px ;
+            margin-bottom: 10px;
             border: none;
             border-radius: 6px;
+            position: relative;
+            top: 20px;
         }
 
         .login-box button {
@@ -51,6 +61,8 @@
             color: white;
             font-size: 16px;
             cursor: pointer;
+            position: relative;
+            top: 20px;
 
         }
 
@@ -89,6 +101,8 @@
         }
         a{
             color: rgb(255, 255, 255);
+            position: relative;
+            top:20px;
             
         }
         a:hover{
@@ -106,9 +120,9 @@
         <!-- ...existing code... -->
 <div class="login-box">
     <h2>Login</h2>
-    <form action="home.html" method="get">
+    <form action="home.html" method="get" style="align-items: center;">
         <select id="userType"
-        style=width:100%;padding:px;margin:20px0;border:none;border-radius:6px;>
+        style=width:295px;padding:9px;margin:0px0;border:none;border-radius:6px;>
             <option value="student">Student</option>
             <option value="teacher">Teacher</option>
         </select>
