@@ -1,31 +1,252 @@
 <!doctype html>
 <html lang="en">
+
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Simple Calendar</title>
-<style>
-  :root{ --bg:#6404ff; --card:#ffffff; --accent:#4f46e5; --muted:#6b7280; --cell:#eef2ff }
-  *{box-sizing:border-box}
-  body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;background:var(--bg);display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px}
-  .wrap{width:100%;max-width:760px}
-  .card{background:var(--card);border-radius:10px;padding:16px;box-shadow:0 6px 18px rgba(15,23,42,0.08)}
-  .top{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px}
-  .month{font-weight:600;font-size:18px}
-  .controls button{margin-left:6px;padding:6px 10px;border-radius:8px;border:0;background:var(--cell);cursor:pointer}
-  .grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
-  .weekday{font-size:13px;color:var(--muted);text-align:center;padding:8px 6px}
-  .day{min-height:80px;background:transparent;padding:8px;border-radius:8px;border:1px dashed rgba(0,0,0,0.03);cursor:pointer;position:relative;overflow:hidden}
-  .other{opacity:.35}
-  .num{font-weight:700;margin-bottom:6px}
-  .event{font-size:12px;background:var(--cell);padding:4px 6px;border-radius:6px;display:inline-block;margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .footer{margin-top:10px;font-size:13px;color:var(--muted);text-align:center}
-  @media (max-width:560px){
-    .day{min-height:64px}
-  }
-</style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Simple Calendar</title>
+  <style>
+    :root {
+      --bg: #6404ff;
+      --card: #ffffff;
+      --accent: #4f46e5;
+      --muted: #6b7280;
+      --cell: #eef2ff;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      background: var(--bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .wrap {
+      width: 100%;
+      max-width: 760px;
+    }
+
+    .card {
+      background: var(--card);
+      border-radius: 10px;
+      padding: 16px;
+      box-shadow: 0 6px 18px rgba(15, 23, 42, 0.08);
+      overflow: hidden;
+    }
+
+    /* Navbar */
+    .nav {
+      display: flex;
+      align-items: center;
+      list-style: none;
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 50px;
+      background: #fff;
+      margin: 0;
+      padding: 0 20px;
+      animation: slideInUp 0.8s ease;
+    }
+
+    .nav img {
+      height: 40px;
+      margin-right: auto;
+    }
+
+    .nav li {
+      margin: 0 12px;
+      cursor: pointer;
+      transition: transform 0.2s ease, color 0.2s ease;
+    }
+
+    .nav li:hover {
+      color: #ffcc00;
+      transform: scale(1.1);
+    }
+
+    /* Top controls */
+    .top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .month {
+      font-weight: 600;
+      font-size: 18px;
+    }
+
+    .controls button {
+      margin-left: 6px;
+      padding: 6px 10px;
+      border-radius: 8px;
+      border: 0;
+      background: var(--cell);
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+
+    .controls button:hover {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    /* Calendar grid */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 6px;
+    }
+
+    .weekday {
+      font-size: 13px;
+      color: var(--muted);
+      text-align: center;
+      padding: 8px 6px;
+    }
+
+    .day {
+      min-height: 80px;
+      padding: 8px;
+      border-radius: 8px;
+      border: 1px dashed rgba(0, 0, 0, 0.05);
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      background: transparent;
+      opacity: 0;
+      animation: fadeScale 0.4s ease forwards;
+    }
+
+    .day:hover {
+      transform: scale(1.05);
+      background: var(--cell);
+      transition: transform 0.2s ease, background 0.2s ease;
+    }
+
+    .other {
+      opacity: 0.35;
+    }
+
+    .num {
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .event {
+      font-size: 12px;
+      background: var(--cell);
+      padding: 4px 6px;
+      border-radius: 6px;
+      display: inline-block;
+      margin-bottom: 4px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .footer {
+      margin-top: 10px;
+      font-size: 13px;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    @media (max-width: 560px) {
+      .day {
+        min-height: 64px;
+      }
+
+      .nav {
+        flex-wrap: wrap;
+        height: auto;
+      }
+    }
+
+    /* Animations */
+    @keyframes fadeScale {
+      from {
+        opacity: 0;
+        transform: scale(0.8);
+      }
+
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    @keyframes slideInUp {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Stagger effect for days */
+    .day:nth-child(1) {
+      animation-delay: 0.05s;
+    }
+
+    .day:nth-child(2) {
+      animation-delay: 0.1s;
+    }
+
+    .day:nth-child(3) {
+      animation-delay: 0.15s;
+    }
+
+    .day:nth-child(4) {
+      animation-delay: 0.2s;
+    }
+
+    .day:nth-child(5) {
+      animation-delay: 0.25s;
+    }
+
+    .day:nth-child(6) {
+      animation-delay: 0.3s;
+    }
+
+    .day:nth-child(7) {
+      animation-delay: 0.35s;
+    }
+
+    .day:nth-child(8) {
+      animation-delay: 0.4s;
+    }
+  </style>
 </head>
+
 <body>
+  <ul class="nav">
+    <img src="logo.png" alt="Logo">
+    <li onclick="location.href='home.html'">Home</li>
+    <li>Notice</li>
+    <li>Attendance</li>
+    <li>Calendar</li>
+    <li>About Us</li>
+    <li>Help</li>
+    <li onclick="location.href='login.html'">Logout</li>
+  </ul>
+
   <div class="wrap">
     <div class="card">
       <div class="top">
@@ -47,109 +268,102 @@
     </div>
   </div>
 
-<script>
-(function(){
-  const weekdays = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-  const weekdaysEl = document.getElementById('weekdays');
-  const daysEl = document.getElementById('days');
-  const monthLabel = document.getElementById('monthLabel');
+  <script>
+    (function () {
+      const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+      const weekdaysEl = document.getElementById('weekdays');
+      const daysEl = document.getElementById('days');
+      const monthLabel = document.getElementById('monthLabel');
 
-  // state
-  let view = new Date(); // current view month
-  // load events from localStorage: { "YYYY-MM-DD": ["Event 1","Event 2"] }
-  const STORAGE_KEY = 'simple_calendar_events_v1';
-  let events = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+      let view = new Date();
+      const STORAGE_KEY = 'simple_calendar_events_v1';
+      let events = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
 
-  function save() {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(events));
-  }
+      function save() {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(events));
+      }
 
-  function fmtYMD(d){
-    const y = d.getFullYear();
-    const m = (d.getMonth()+1).toString().padStart(2,'0');
-    const dd = d.getDate().toString().padStart(2,'0');
-    return `${y}-${m}-${dd}`;
-  }
+      function fmtYMD(d) {
+        return `${d.getFullYear()}-${(d.getMonth() + 1).toString().padStart(2, '0')}-${d.getDate().toString().padStart(2, '0')}`;
+      }
 
-  function renderWeekdays(){
-    weekdaysEl.innerHTML = weekdays.map(w => `<div class="weekday">${w}</div>`).join('');
-  }
+      function renderWeekdays() {
+        weekdaysEl.innerHTML = weekdays.map(w => `<div class="weekday">${w}</div>`).join('');
+      }
 
-  function render(){
-    daysEl.innerHTML = '';
-    const year = view.getFullYear();
-    const month = view.getMonth();
+      function render() {
+        daysEl.innerHTML = '';
+        const year = view.getFullYear();
+        const month = view.getMonth();
 
-    const first = new Date(year, month, 1);
-    const startDay = first.getDay();
-    const daysInMonth = new Date(year, month+1, 0).getDate();
-    const prevMonthDays = new Date(year, month, 0).getDate();
+        const first = new Date(year, month, 1);
+        const startDay = first.getDay();
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
+        const prevMonthDays = new Date(year, month, 0).getDate();
 
-    monthLabel.textContent = first.toLocaleString(undefined, { month: 'long', year: 'numeric' });
+        monthLabel.textContent = first.toLocaleString(undefined, { month: 'long', year: 'numeric' });
 
-    const cells = [];
+        const cells = [];
 
-    // previous month's tail
-    for(let i = startDay - 1; i >= 0; i--){
-      const d = prevMonthDays - i;
-      cells.push({ day: d, other: true, y: (month===0?year-1:year), m: (month===0?11:month-1) });
-    }
-    // current month
-    for(let i=1;i<=daysInMonth;i++) cells.push({ day: i, other:false, y: year, m: month });
-    // next month's head
-    while(cells.length % 7 !== 0){
-      const idx = cells.length - (startDay + daysInMonth);
-      cells.push({ day: idx+1, other:true, y: (month===11?year+1:year), m: (month===11?0:month+1) });
-    }
+        // prev month days
+        for (let i = startDay - 1; i >= 0; i--) {
+          const d = prevMonthDays - i;
+          cells.push({ day: d, other: true, y: month === 0 ? year - 1 : year, m: month === 0 ? 11 : month - 1 });
+        }
+        // current month
+        for (let i = 1; i <= daysInMonth; i++) {
+          cells.push({ day: i, other: false, y: year, m: month });
+        }
+        // next month filler
+        while (cells.length % 7 !== 0) {
+          const idx = cells.length - (startDay + daysInMonth);
+          cells.push({ day: idx + 1, other: true, y: month === 11 ? year + 1 : year, m: month === 11 ? 0 : month + 1 });
+        }
 
-    cells.forEach(c => {
-      const d = new Date(c.y, c.m, c.day);
-      const iso = fmtYMD(d);
-      const evs = events[iso] || [];
-      const isToday = (new Date()).toDateString() === d.toDateString();
+        cells.forEach((c, i) => {
+          const d = new Date(c.y, c.m, c.day);
+          const iso = fmtYMD(d);
+          const evs = events[iso] || [];
+          const isToday = (new Date()).toDateString() === d.toDateString();
 
-      const el = document.createElement('div');
-      el.className = 'day' + (c.other ? ' other' : '');
-      el.innerHTML = `<div class="num">${c.day} ${isToday?'<span style="font-weight:600;color:var(--accent);margin-left:6px;font-size:12px">Today</span>':''}</div>
-                      <div class="events">${evs.slice(0,2).map(e=>`<div class="event">${escapeHtml(e)}</div>`).join('')}</div>`;
-      el.addEventListener('click', ()=> onDayClick(d));
-      daysEl.appendChild(el);
-    });
-  }
+          const el = document.createElement('div');
+          el.className = 'day' + (c.other ? ' other' : '');
+          el.style.animationDelay = `${i * 0.03}s`; // stagger dynamically
+          el.innerHTML = `
+            <div class="num">
+              ${c.day} ${isToday ? '<span style="font-weight:600;color:var(--accent);margin-left:6px;font-size:12px">Today</span>' : ''}
+            </div>
+            <div class="events">${evs.slice(0, 2).map(e => `<div class="event">${escapeHtml(e)}</div>`).join('')}</div>
+          `;
+          el.addEventListener('click', () => onDayClick(d));
+          daysEl.appendChild(el);
+        });
+      }
 
-  function onDayClick(dateObj){
-    const iso = fmtYMD(dateObj);
-    const title = prompt(`Add event for ${iso} (leave empty to cancel):`);
-    if(!title) return;
-    if(!events[iso]) events[iso] = [];
-    events[iso].push(title.trim());
-    save();
-    render();
-  }
+      function onDayClick(dateObj) {
+        const iso = fmtYMD(dateObj);
+        const title = prompt(`Add event for ${iso} (leave empty to cancel):`);
+        if (!title) return;
+        if (!events[iso]) events[iso] = [];
+        events[iso].push(title.trim());
+        save();
+        render();
+      }
 
-  function escapeHtml(str){
-    return String(str)
-      .replace(/&/g, '&amp;')
-      .replace(/"/g, '&quot;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;');
-  }
+      function escapeHtml(str) {
+        return String(str).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      }
 
-  // controls
-  document.getElementById('prev').addEventListener('click', ()=>{
-    view.setMonth(view.getMonth()-1); render();
-  });
-  document.getElementById('next').addEventListener('click', ()=>{
-    view.setMonth(view.getMonth()+1); render();
-  });
-  document.getElementById('today').addEventListener('click', ()=>{
-    view = new Date(); render();
-  });
+      // Controls
+      document.getElementById('prev').addEventListener('click', () => { view.setMonth(view.getMonth() - 1); render(); });
+      document.getElementById('next').addEventListener('click', () => { view.setMonth(view.getMonth() + 1); render(); });
+      document.getElementById('today').addEventListener('click', () => { view = new Date(); render(); });
 
-  // init
-  renderWeekdays();
-  render();
-})();
-</script>
+      // Init
+      renderWeekdays();
+      render();
+    })();
+  </script>
 </body>
+
 </html>
