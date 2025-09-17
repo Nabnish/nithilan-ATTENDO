@@ -1,14 +1,17 @@
 {
   "name": "attendo",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Attendance system using Express and face-api.js",
+  "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node server.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "engines": {
+    "node": "18.x"
+  },
   "dependencies": {
     "express": "^5.1.0",
     "face-api.js": "^0.22.2"
