@@ -9,151 +9,136 @@
         body {
             margin: 0;
             padding: 0;
-            height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
+            height: 100vh;
+            font-family: Arial;
+        }
 
-            font-family: Arial, sans-serif;
+        .bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        .bg img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .nav img {
+            width: 100px;
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            z-index: 2;
         }
 
         .login-box {
-            background: rgba(255, 255, 255, 0.126);
-            padding: 40px;
-            border-radius: 12px;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.981);
+            background: rgba(112, 110, 110, 0.196);
+            padding: 30px;
+            border-radius: 10px;
             width: 300px;
-            color: rgb(238, 238, 238);
             text-align: center;
-            position: absolute;
-            z-index: 2;
-            animation: fadeIn 2s ease;
-            
+            z-index: 1;
         }
 
-        .login-box h2 {
-            margin-bottom: 20px;
-            padding-top: 0px;
-            margin-top: 0px;
-            position: relative;
-            top:0px;
-            left:10px
-            
-        }
-
-        .login-box input {
-            width: 90%;
-            padding: 10px;
-            margin-top:10px ;
-            margin-bottom: 10px;
-            border: none;
-            border-radius: 6px;
-            position: relative;
-            top: 20px;
-        }
-
+        .login-box input,
+        .login-box select,
         .login-box button {
             width: 100%;
             padding: 12px;
-            background: #0f5c90;
-            border: none;
+            margin: 10px 0;
             border-radius: 6px;
-            color: white;
+            box-sizing: border-box;
             font-size: 16px;
-            cursor: pointer;
-            position: relative;
-            top: 20px;
+        }
 
+        .login-box button {
+            background: #0f5c90;
+            color: white;
+            border: none;
+            cursor: pointer;
         }
 
         .login-box button:hover {
             background: #68b0c9;
         }
 
-        .nav {
-            position: absolute;
-            top: 0px;
-            left: 0px;
-            z-index: 2;
-
+        #message {
+            color: red;
+            font-size: 14px;
         }
-
-        .bg img {
-            position: relative;
-            z-index: 1;
-            object-fit: cover;
-            filter: blur(3px);
-            height:99.5vh;
-            width:99.5vw;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(-20px);
-                /* slight upward motion */
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        a{
-            color: rgb(255, 255, 255);
-            position: relative;
-            top:20px;
-            
-        }
-        a:hover{
-            color: #fd0707;
+        .login-box h2{
+            color: white;
         }
     </style>
 </head>
 
 <body>
-    <div class="nav">
-        <img src="logo.png" width="100">
 
+    <div class="nav">
+        <img src="/static/logo.png" alt="Logo">
     </div>
-    <div class="bg"><img src="loginbg.jpg" width="1530"></div>
-        <!-- ...existing code... -->
-<div class="login-box">
-    <h2>Login</h2>
-    <form action="home.html" method="get" style="align-items: center;">
-        <select id="userType"
-        style=width:295px;padding:9px;margin:0px0;border:none;border-radius:6px;>
+
+    <div class="bg">
+        <img src="/static/loginbg.jpg" alt="Background">
+    </div>
+
+    <div class="login-box">
+        <h2>Login</h2>
+        <input type="text" id="username" placeholder="Username">
+        <input type="password" id="password" placeholder="Password">
+        <select id="role">
             <option value="student">Student</option>
             <option value="teacher">Teacher</option>
         </select>
-        <input type="text" id="regNo" placeholder="Register.NO" required>
-        <input type="text" id="staffCode" placeholder="Staff Code" style="display:none;">
-        <input type="password" placeholder="Password" required>
-        <button type="submit">Login</button>
-        <a href="#">forgot password?</a>
-    </form>
-</div>
-<script>
-    const userType = document.getElementById('userType');
-    const regNo = document.getElementById('regNo');
-    const staffCode = document.getElementById('staffCode');
-
-    userType.addEventListener('change', function () {
-        if (userType.value === 'teacher') {
-            regNo.style.display = 'none';
-            regNo.required = false;
-            staffCode.style.display = 'block';
-            staffCode.required = true;
-        } else {
-            regNo.style.display = 'block';
-            regNo.required = true;
-            staffCode.style.display = 'none';
-            staffCode.required = false;
-        }
-    });
-</script>
-<!-- ...existing code... -->
+        <button type="button" onclick="login()">Login</button>
+        <button type="button" onclick="register()">Register</button>
+        <p id="message"></p>
     </div>
+
+    <script>
+        async function login() {
+            const username = document.getElementById("username").value.trim();
+            const password = document.getElementById("password").value.trim();
+            if (!username || !password) {
+                document.getElementById("message").textContent = "Fill all fields.";
+                return;
+            }
+            const res = await fetch("/login", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ username, password })
+            });
+            const data = await res.json();
+            document.getElementById("message").textContent = data.message;
+            if (data.status === "success") { window.location.href = "/home"; }
+        }
+
+        async function register() {
+            const username = document.getElementById("username").value.trim();
+            const password = document.getElementById("password").value.trim();
+            const role = document.getElementById("role").value;
+            if (!username || !password) {
+                document.getElementById("message").textContent = "Fill all fields.";
+                return;
+            }
+            const res = await fetch("/register", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ username, password, role })
+            });
+            const data = await res.json();
+            document.getElementById("message").textContent = data.message;
+        }
+    </script>
+
 </body>
 
 </html>
